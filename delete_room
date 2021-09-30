@@ -1,0 +1,24 @@
+#!/bin/bash
+
+usage() {
+  echo "Not enough arguments supplied."
+  echo "Syntax: $(basename $0) {roomid}"
+  echo
+}
+
+if [[ $# -lt 1 ]]; then
+  usage
+  exit 1
+fi
+
+. $(dirname $0)/auth
+
+ROOMID=$1
+
+curl -s --insecure -X DELETE \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"block":true, "purge":true, "force_purge":true}' "http://localhost:8008/_synapse/admin/v1/rooms/$ROOMID" | \
+  sed 's/,/,\n  /g; s/{/{\n  /g; s/}/\n}/g'
+
+echo

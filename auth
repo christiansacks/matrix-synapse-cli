@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# To get your token, in element navigate to
+# Profile -> All Settings -> Help & About
+
+TOKEN="YOURSUPERSECRETMATRIXTOKENINHERE"
+HOMESERVER="matrix.example.com"

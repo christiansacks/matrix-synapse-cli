@@ -1,0 +1,29 @@
+#!/bin/bash
+
+usage() {
+  echo "Not enough arguments supplied."
+  echo
+  echo "Syntax: $(basename $0) {username} {new name}"
+  echo "Example:"
+  echo "     $(basename $0) ktulu dis-Ktulu-dis"
+}
+
+if [[ $# -lt 2 ]]; then
+  usage
+  exit 1
+fi
+
+. $(dirname $0)/auth
+
+USER=$1
+NEWNAME=$2
+NEWPASS="$(apg -MNC -m64 -n1)"
+
+curl -s --insecure -X PUT \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{"deactivated": true, "displayname":"'$NEWNAME'", "password":"'$NEWPASS'"}' \
+  "http://localhost:8008/_synapse/admin/v2/users/@$USER:$HOMESERVER" | \
+  sed 's/,/,\n  /g; s/{/{\n  /g; s/}/\n}/g'
+
+echo

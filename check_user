@@ -1,0 +1,24 @@
+#!/bin/bash
+
+usage() {
+  echo "Not enough arguments supplied."
+  echo "Syntax: $(basename $0) {username}"
+  echo
+}
+
+if [[ $# -lt 1 ]]; then
+  usage
+  exit 1
+fi
+
+. $(dirname $0)/auth
+
+USER=$1
+
+curl -s --insecure -X GET \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{}' "http://localhost:8008/_synapse/admin/v2/users/@$USER:$HOMESERVER" | \
+  sed 's/,/,\n  /g; s/{/{\n  /g; s/}/\n}/g'
+
+echo

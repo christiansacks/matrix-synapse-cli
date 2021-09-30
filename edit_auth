@@ -1,0 +1,2 @@
+#!/bin/sh
+vim /root/api_calls/auth

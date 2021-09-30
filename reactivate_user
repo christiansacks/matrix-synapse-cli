@@ -1,0 +1,28 @@
+#!/bin/bash
+
+usage() {
+  echo "Not enough arguments supplied."
+  echo "Syntax: $(basename $0) {username} {new name} {new password} {isadmin 0=no 1=yes}"
+  echo
+}
+
+if [[ $# -lt 4 ]]; then
+  usage
+  exit 1
+fi
+
+. $(dirname $0)/auth
+
+USER=$1
+NEWNAME=$2
+NEWPASS=$3
+ISADMIN=$4
+
+curl -s --insecure -X PUT \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  --data '{"deactivated": false, "admin":'$ISADMIN', "displayname":"'$NEWNAME'", "password":"'$NEWPASS'"}' \
+  "http://localhost:8008/_synapse/admin/v2/users/@$USER:$HOMESERVER" | \
+  sed 's/,/,\n  /g; s/{/{\n  /g; s/}/\n}/g'
+
+echo
